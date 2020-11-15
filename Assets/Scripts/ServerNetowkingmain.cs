@@ -29,7 +29,7 @@ public class ServerNetowkingmain : MonoBehaviour
             m_Driver.Listen();
 
         m_Connections = new NativeList<NetworkConnection>(16, Allocator.Persistent);
-        InvokeRepeating("HandShake", 0.0f, 2.0f);
+        InvokeRepeating("SendHandShake", 0.0f, 2.0f);
     }
 
     void SendToClient(string message, NetworkConnection c)
@@ -50,7 +50,7 @@ public class ServerNetowkingmain : MonoBehaviour
         SendIDToClient(c);
         SendAllSpawnedPlayers(c);
         m_Connections.Add(c);
-        Debug.Log("Accepted a connection.");
+        Debug.Log("Connection established");
     }
 
     void SendIDToClient(NetworkConnection c)
@@ -68,7 +68,7 @@ public class ServerNetowkingmain : MonoBehaviour
         }
     }
 
-    void HandShake()
+    void SendHandShake()
     {
         foreach (NetworkConnection c in m_Connections)
         {
@@ -114,24 +114,20 @@ public class ServerNetowkingmain : MonoBehaviour
         {
             case Commands.HANDSHAKE:
                 HandshakeMsg hsMsg = JsonUtility.FromJson<HandshakeMsg>(recMsg);
-                //Debug.Log("Handshake message received!");
                 break;
 
             case Commands.PLAYER_UPDATE:
                 PlayerUpdateMsg puMsg = JsonUtility.FromJson<PlayerUpdateMsg>(recMsg);
-                Debug.Log("Player update message received!");
                 break;
 
             case Commands.SERVER_UPDATE:
                 ServerUpdateMsg suMsg = JsonUtility.FromJson<ServerUpdateMsg>(recMsg);
-                Debug.Log("Server update message received!");
                 break;
 
             case Commands.PLAYER_SPAWN:
                 PlayerSpawnMsg psMsg = JsonUtility.FromJson<PlayerSpawnMsg>(recMsg);
                 AllSpawnMsg.Add(psMsg);
                 SpawnNewPlayer(psMsg);
-                Debug.Log(psMsg.ID + " has joined the server!");
                 break;
 
             case Commands.UPDATE_STATS:
@@ -141,7 +137,6 @@ public class ServerNetowkingmain : MonoBehaviour
 
             case Commands.PLAYER_DC:
                 PlayerDCMsg pdMsg = JsonUtility.FromJson<PlayerDCMsg>(recMsg);
-                Debug.Log("Removed Spawn data of: " + pdMsg.PlayerID);
                 AllSpawnMsg.Remove(FindPlayerSpawnMsg(pdMsg.PlayerID));
                 DCPlayer(pdMsg);
                 break;
@@ -151,6 +146,7 @@ public class ServerNetowkingmain : MonoBehaviour
                 break;
         }
     }
+
 
     PlayerSpawnMsg FindPlayerSpawnMsg(string ID)
     {

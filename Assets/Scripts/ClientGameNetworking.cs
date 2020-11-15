@@ -49,42 +49,26 @@ public class ClientGameNetworking : MonoBehaviour
     void OnConnect()
     {
         Debug.Log("Connected to the server.");
-        PlayerID = "Player " + LocalIPAddress() + " " + System.DateTime.Now.ToString() + UnityEngine.Random.value.ToString();
+        PlayerID = UnityEngine.Random.value.ToString();
         SpawnPlayer();
-        InvokeRepeating("HandShake", 0.0f, 2.0f);
+        InvokeRepeating("SendHandShake", 0.0f, 2.0f);
         InvokeRepeating("UpdateStats", 0.0f, 1.0f / 30.0f);
     }
 
-    string LocalIPAddress()
-    {
-        IPHostEntry host;
-        string localIP = "0.0.0.0";
-        host = Dns.GetHostEntry(Dns.GetHostName());
-        foreach (IPAddress ip in host.AddressList)
-        {
-            if (ip.AddressFamily == AddressFamily.InterNetwork)
-            {
-                localIP = ip.ToString();
-                break;
-            }
-        }
-        return localIP;
-    }
 
     void SpawnPlayer()
     {
-        Debug.Log("Player spawned.");
 
         Vector3 pos = new Vector3(UnityEngine.Random.Range(-2.0f, 2.0f), 0.0f, 0.0f);
 
         playerGO = Instantiate(PlayerPrefab, pos, new Quaternion());
-        playerInfo = playerGO.GetComponent<NetInfo>();
-        playerInfo.localID = m_Connection.InternalId.ToString();
-        playerInfo.playerID = PlayerID;
-        playerInfo.ActivateCam();
-        //playerGO.AddComponent<PlayerControl>();
-        AllPlayersGO.Add(playerGO);
 
+        playerInfo = playerGO.GetComponent<NetInfo>();
+        playerGO.GetComponent<NetInfo>().playerID = PlayerID;
+
+        playerInfo.playerID = PlayerID;
+        AllPlayersGO.Add(playerGO);
+     
         //// Example to send a handshake message:
         PlayerSpawnMsg m = new PlayerSpawnMsg();
         m.Position = pos;
@@ -94,22 +78,27 @@ public class ClientGameNetworking : MonoBehaviour
 
     void SpawnOtherPlayer(PlayerSpawnMsg msg)
     {
+        
         if (msg.ID != PlayerID)
         {
+            
             GameObject otherPlayerGO = Instantiate(PlayerPrefab, msg.Position, new Quaternion());
             otherPlayerGO.GetComponent<NetInfo>().playerID = msg.ID;
             AllPlayersGO.Add(otherPlayerGO);
         }
+        
     }
 
     void UpdateOtherPlayer(UpdateStatsMsg msg)
     {
+        
         if (msg.ID != PlayerID)
         {
             GameObject Obj = FindPlayerObj(msg.ID);
             if (Obj)
             {
                 Obj.transform.position = msg.Position;
+                
                 //Obj.transform.rotation = msg.Rotation;
             }
         }
@@ -117,6 +106,7 @@ public class ClientGameNetworking : MonoBehaviour
 
     GameObject FindPlayerObj(string ID)
     {
+        
         foreach (GameObject go in AllPlayersGO)
         {
             if (go.GetComponent<NetInfo>().playerID == ID)
@@ -138,23 +128,19 @@ public class ClientGameNetworking : MonoBehaviour
         {
             case Commands.HANDSHAKE:
                 HandshakeMsg hsMsg = JsonUtility.FromJson<HandshakeMsg>(recMsg);
-                //Debug.Log("Handshake message received!");
                 break;
 
             case Commands.PLAYER_UPDATE:
                 PlayerUpdateMsg puMsg = JsonUtility.FromJson<PlayerUpdateMsg>(recMsg);
-                Debug.Log("Player update message received!");
                 break;
 
             case Commands.SERVER_UPDATE:
                 ServerUpdateMsg suMsg = JsonUtility.FromJson<ServerUpdateMsg>(recMsg);
-                Debug.Log("Server update message received!");
                 break;
 
             case Commands.REQUEST_ID:
                 RequestIDMsg riMsg = JsonUtility.FromJson<RequestIDMsg>(recMsg);
                 playerInfo.serverID = riMsg.ID;
-                Debug.Log("Request ID message received!");
                 break;
 
             case Commands.PLAYER_SPAWN:
@@ -195,9 +181,8 @@ public class ClientGameNetworking : MonoBehaviour
         m_Driver.Dispose();
     }
 
-    void HandShake()
+    void SendHandShake()
     {
-        //// Example to send a handshake message:
         HandshakeMsg m = new HandshakeMsg();
         m.player.id = m_Connection.InternalId.ToString();
         SendToServer(JsonUtility.ToJson(m));
@@ -221,7 +206,9 @@ public class ClientGameNetworking : MonoBehaviour
         UpdateStatsMsg m = new UpdateStatsMsg();
         m.ID = PlayerID;
         m.Position = playerGO.transform.position;
+
         //m.Rotation = playerGO.transform.rotation;
+       
         SendToServer(JsonUtility.ToJson(m));
     }
 

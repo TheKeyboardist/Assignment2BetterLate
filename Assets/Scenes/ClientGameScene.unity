@@ -217,6 +217,7 @@ GameObject:
   - component: {fileID: 1973805285}
   - component: {fileID: 1973805284}
   - component: {fileID: 1973805286}
+  - component: {fileID: 1973805287}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -240,7 +241,7 @@ MonoBehaviour:
   serverPort: 12345
   PlayerID: 0
   PlayerPrefab: {fileID: 7136088960556221538, guid: 3e21a7494585f4cf5b9d5a5a48d240bb, type: 3}
-  playerGO: {fileID: 0}
+  playerGO: {fileID: 7136088960556221538, guid: 3e21a7494585f4cf5b9d5a5a48d240bb, type: 3}
   AllPlayersGO: []
 --- !u!4 &1973805285
 Transform:
@@ -269,3 +270,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   client: {fileID: 1973805284}
+--- !u!114 &1973805287
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1973805283}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9f3eb50811214aea93edeb03114c1c4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerID: 
+  localID: 
+  serverID: 

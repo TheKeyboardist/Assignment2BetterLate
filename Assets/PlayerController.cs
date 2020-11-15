@@ -19,13 +19,13 @@ public class PlayerController : MonoBehaviour
         {
 
             //transform.Translate(Vector3.forward * Time.deltaTime * playerSpeed);networkMan.SendToServer(JsonUtility.ToJson(m));
-            client.playerGO.transform.position += (Vector3.forward * Time.deltaTime * playerSpeed);
+            client.playerGO.transform.position += (Vector3.up * Time.deltaTime * playerSpeed);
         }
 
         if (Input.GetKey(KeyCode.S))
         {
             //transform.Translate(-Vector3.forward * Time.deltaTime * playerSpeed);
-            client.playerGO.transform.position += (-Vector3.forward * Time.deltaTime * playerSpeed);
+            client.playerGO.transform.position += (-Vector3.up * Time.deltaTime * playerSpeed);
         }
 
         if (Input.GetKey(KeyCode.A))
