@@ -98,8 +98,6 @@ public class ClientGameNetworking : MonoBehaviour
             if (Obj)
             {
                 Obj.transform.position = msg.Position;
-                
-                //Obj.transform.rotation = msg.Rotation;
             }
         }
     }

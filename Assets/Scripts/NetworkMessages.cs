@@ -48,7 +48,6 @@ namespace NetworkMessages
     {
         public string ID;
         public Vector3 Position;
-        //public Quaternion Rotation;
         public UpdateStatsMsg()
         {      // Constructor
             cmd = Commands.UPDATE_STATS;
